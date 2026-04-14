@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeri Modern Siswa - SDIT TIHAMAH</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:'Segoe UI',sans-serif;
+ color:white;
+
+ /* BACKGROUND GAMBAR */
+ background: url('12.jpeg') no-repeat center center fixed;
+ background-size: cover;
+}
+
+body::before{
+ content:"";
+ position:fixed;
+ top:0;
+ left:0;
+ width:100%;
+ height:100%;
+ background:rgba(0,0,0,0.5); /* gelap transparan */
+ z-index:-1;
+}
+
+/* HEADER */
+header{
+    text-align:center;
+ padding:20px 10px;
+ background:rgba(0, 128, 0, 0.25);
+ backdrop-filter: blur(10px);
+ border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+/* LOGO */
+.logo-wrap{
+ position:relative;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ margin-bottom:15px;
+}
+
+.logo{
+ width:90px;
+ z-index:2;
+ border-radius:50%;
+}
+
+/* CAHAYA */
+.glow{
+ position:absolute;
+ width:140px;
+ height:140px;
+ background:radial-gradient(circle, rgba(56,189,248,0.7) 0%, rgba(56,189,248,0.2) 40%, transparent 70%);
+ border-radius:50%;
+ filter:blur(15px);
+ animation:pulseGlow 3s infinite;
+ z-index:1;
+}
+
+@keyframes pulseGlow{
+ 0%{transform:scale(0.9); opacity:0.7;}
+ 50%{transform:scale(1.2); opacity:1;}
+ 100%{transform:scale(0.9); opacity:0.7;}
+}
+
+header h1{
+ margin:0;
+ font-size:clamp(20px,5vw,32px);
+}
+
+header p {
+    font-size: 30px; /* silakan diperbesar */
+    font-weight: bold;
+}
+
+/* FILTER */
+.filter{
+ text-align:center;
+ padding:15px;
+}
+
+.filter button{
+ margin:5px;
+ padding:8px 15px;
+ border:none;
+ border-radius:20px;
+ cursor:pointer;
+ background:#334155;
+ color:white;
+}
+
+.filter button.active{
+ background:#38bdf8;
+}
+
+/* GALLERY */
+.gallery{
+ column-count:4;
+ column-gap:15px;
+ padding:20px;
+}
+
+.gallery-item{
+ margin-bottom:15px;
+ break-inside:avoid;
+ position:relative;
+ cursor:pointer;
+ animation:fadeIn 0.5s ease;
+}
+
+.gallery-item img{
+ width:100%;
+ border-radius:12px;
+ transition:0.3s;
+}
+
+.gallery-item:hover img{
+ transform:scale(1.08);
+ filter:brightness(0.8);
+}
+
+@keyframes fadeIn{
+ from{opacity:0; transform:translateY(20px)}
+ to{opacity:1; transform:translateY(0)}
+}
+
+.caption{
+ position:absolute;
+ bottom:0;
+ width:100%;
+ padding:10px;
+ background:linear-gradient(transparent,rgba(0,0,0,0.8));
+ font-size:14px;
+ border-radius:0 0 12px 12px;
+}
+
+/* ICON ZOOM */
+.zoom-icon{
+ position:absolute;
+ top:10px;
+ right:10px;
+ background:rgba(0,0,0,0.6);
+ padding:5px 8px;
+ border-radius:50%;
+ font-size:14px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1000px){.gallery{column-count:3}}
+@media(max-width:700px){.gallery{column-count:2}}
+@media(max-width:500px){.gallery{column-count:1}}
+
+/* MODAL */
+.modal{
+ display:none;
+ position:fixed;
+ top:0;left:0;
+ width:100%;height:100%;
+ background:rgba(0,0,0,0.9);
+}
+
+.modal img{
+ display:block;
+ margin:5% auto;
+ max-width:80%;
+ border-radius:10px;
+}
+
+.close{
+ position:absolute;
+ top:20px;
+ right:30px;
+ font-size:30px;
+ cursor:pointer;
+}
+
+footer{
+ text-align:center;
+ padding:20px;
+ background:#020617;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo-wrap">
+  <img src="LOGO SDIT 2023.png" class="logo">
+  <div class="glow"></div>
+</div>
+
+<h1>GALERI KEGIATAN SISWA</h1>
+<p>SDIT TIHAMAH</p>
+
+</header>
+
+<div class="filter">
+ <button class="active" onclick="filterData('all', this)">Semua</button>
+ <button onclick="filterData('Pembelajaran', this)">Pembelajaran</button>
+ <button onclick="filterData('PHBI', this)">PHBI</button>
+ <button onclick="filterData('PHBN', this)">PHBN</button>
+ <button onclick="filterData('Kegiatan Sekolah', this)">Kegiatan Sekolah</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<div id="modal" class="modal">
+ <span class="close" onclick="closeModal()">&times;</span>
+ <img id="modalImg">
+</div>
+
+<script>
+const data=[
+ {img:'1.jpeg',kategori:'Pembelajaran',judul:'Kegiatan Belajar Dengan Media IPF',nama:'Drs. H. Supardi, M.Pd.',tanggal:'12 Januari 2026'},
+ {img:'10.jpeg',kategori:'Pembelajaran',judul:'Kegiatan Belajar Dengan Media IPF',nama:'Abdullah, S.Pd.',tanggal:'12 Januari 2026'},
+ {img:'11.jpeg',kategori:'Pembelajaran',judul:'Kegiatan Belajar Mengajar',nama:'Jariyah, S.Pd.',tanggal:'5 Februari 2026'},
+ {img:'5.jpeg',kategori:'PHBN',judul:'Lomba Peringatan Hari Kemerdekaan RI',nama:'Semua Siswa SDIT Tihamah',tanggal:'17 Agustus 2025'},
+ {img:'6.jpeg',kategori:'PHBN',judul:'Lomba Peringatan Hari Kemerdekaan RI',nama:'Semua Siswa SDIT Tihamah',tanggal:'17 Agustus 2025'},
+ {img:'7.jpeg',kategori:'PHBN',judul:'Lomba Peringatan Hari Kemerdekaan RI',nama:'Semua Siswa SDIT Tihamah',tanggal:'17 Agustus 2025'},
+ {img:'8.jpeg',kategori:'PHBN',judul:'Lomba Peringatan Hari Kemerdekaan RI',nama:'Semua Siswa SDIT Tihamah',tanggal:'17 Agustus 2025'},
+ {img:'9.jpeg',kategori:'PHBN',judul:'Lomba Peringatan Hari Kemerdekaan RI',nama:'Semua Siswa SDIT Tihamah',tanggal:'17 Agustus 2025'},
+ {img:'2.jpeg',kategori:'Kegiatan Sekolah',judul:'Upacara Bendera Merah Putih',nama:'Semua Civitas dan Siswa SDIT Tihamah',tanggal:'10 Maret 2026'},
+ {img:'3.jpeg',kategori:'Kegiatan Sekolah',judul:'Musyawarah Komite SDIT Tihamah',nama:'Plt. Kepala SDIT Tihamah dan Komite SDIT Tiahamah',tanggal:'10 Maret 2026'},
+ {img:'4.jpeg',kategori:'Kegiatan Sekolah',judul:'Musyawarah Komite SDIT Tihamah',nama:'Plt. Kepala SDIT Tihamah dan Komite SDIT Tiahamah',tanggal:'10 Maret 2026'},
+ {img:'13.jpeg',kategori:'Kegiatan Sekolah',judul:'Kegiatan PPL dari UMC',nama:'Kepsek SDIT Tihamah dan Mahasiswa UMC',tanggal:'10 Maret 2026'},
+ {img:'14.jpeg',kategori:'Kegiatan Sekolah',judul:'Kegiatan PPL dari UMC',nama:'Kepsek SDIT Tihamah dan Mahasiswa UMC',tanggal:'10 Maret 2026'},
+ {img:'15.jpeg',kategori:'Kegiatan Sekolah',judul:'MOU Dengan Universitas BBC',nama:'Kepsek SDIT Tihamah dan Dosen Beserta Mahasiswa Universitas BBC',tanggal:'10 Maret 2026'},
+ {img:'16.png',kategori:'Kegiatan Sekolah',judul:'Juara Lomba Pentas PAI Tingkat Kec. Sember',nama:'AINAYA FATHIYYATURAHMA',tanggal:'10 Maret 2026'},
+ {img:'17.png',kategori:'Kegiatan Sekolah',judul:'Juara Lomba Pentas PAI Tingkat Kec. Sember',nama:'SHABIRA CALISTA PUTRI',tanggal:'10 Maret 2026'},
+ {img:'18.png',kategori:'Kegiatan Sekolah',judul:'Juara Lomba Pentas PAI Tingkat Kec. Sember',nama:'Muhammad Sahib Mirbat',tanggal:'10 Maret 2026'},
+ {img:'19.png',kategori:'Kegiatan Sekolah',judul:'Juara Lomba Pentas PAI Tingkat Kec. Sember',nama:'MUHAMMAD IRFAN ARSYAD',tanggal:'10 Maret 2026'}
+
+];
+
+let filtered=data;
+
+function render(list){
+ let g=document.getElementById('gallery');
+ g.innerHTML='';
+ list.forEach((d)=>{
+  g.innerHTML+=`
+  <div class='gallery-item' onclick="openModal('${d.img}')">
+   <img src='${d.img}' onerror="this.src='https://via.placeholder.com/300'">
+   <div class='caption'>
+    <b>${d.judul}</b><br>
+    👤 ${d.nama}<br>
+    📅 ${d.tanggal}
+   </div>
+   <div class="zoom-icon">🔍</div>
+  </div>`;
+ });
+}
+
+function filterData(k,el){
+ document.querySelectorAll('.filter button').forEach(b=>b.classList.remove('active'));
+ el.classList.add('active');
+ filtered = k==='all'?data:data.filter(d=>d.kategori===k);
+ render(filtered);
+}
+
+function openModal(img){
+ document.getElementById('modal').style.display='block';
+ document.getElementById('modalImg').src=img;
+}
+
+function closeModal(){
+ document.getElementById('modal').style.display='none';
+}
+
+render(data);
+</script>
+
+<footer>
+ <p>© 2026 SDIT TIHAMAH</p>
+</footer>
+
+</body>
+</html>
